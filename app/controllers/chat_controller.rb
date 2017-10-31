@@ -1,13 +1,20 @@
 class ChatController < ApplicationController
   def index
     #lists all slack channels
+    @channels = SlackApiWrapper.list_channels
   end
 
   def new
-    #lets you make a new message for the slack channel
+    @channel = params[:channel]
+    index.each do |channel|
+      if channel.id == @channel
+        @name = channel.name
+      end
+    end
   end
 
   def create
-    #will create the message, post it to the channel, and redirect you back to the channel
+    SlackApiWrapper.send_message(params[:channel], params[:message])
+    redirect_to root_path
   end
 end
